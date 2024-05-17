@@ -1,0 +1,13 @@
+langchain_core
+langchain
+langchain_experimental
+google-generativeai
+langchain-community
+pdf2image
+langchain_google_genai
+tiktoken
+langgraph  
+tavily-python
+qdrant-client
+flashrank
+fastembed
