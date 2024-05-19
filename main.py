@@ -29,10 +29,12 @@ import pinecone
 import openai
 import time
 # from fastapi import FastAPI
-from lcserve import serving
+# from lcserve import serving
 
 import nltk
 import os
+
+from multiprocessing import Pool, cpu_count
 
 os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
 
@@ -45,34 +47,46 @@ model = ChatGoogleGenerativeAI(model='models/gemini-pro-vision', temperature=0.8
 # images = pdf2image.convert_from_path(pdf_path = "Medical_Record_File_1.pdf", first_page=4, last_page=24)
 # print(images[0])
 
-def convert_pdf_to_base64(pdf_path, first_page=4, last_page=24, output_folder="converted_images"):
+# Function to process a chunk of pages
+def process_chunk(pdf_path, first_page, last_page, output_folder, chunk_index):
+    encoded_images_json = {}
+    images = pdf2image.convert_from_path(pdf_path=pdf_path, first_page=first_page, last_page=last_page)
+    
+    for i, image in enumerate(images):
+        page_number = first_page + i
+        with io.BytesIO() as output:
+            image.save(output, format="JPEG")
+            image_data = output.getvalue()
+            encoded_image = base64.b64encode(image_data).decode("utf-8")
+            filename = f"page_{page_number}.jpg"  
+            encoded_images_json[f"{page_number}"] = encoded_image
+            image.save(os.path.join(output_folder, filename), format="JPEG")
+    
+    return encoded_images_json
 
-  images = pdf2image.convert_from_path(pdf_path=pdf_path, first_page=first_page, last_page=last_page)
-  encoded_images_json = {}
+def convert_pdf_to_base64(pdf_path, chunk_size=30, output_folder="converted_images"):
+    total_pages = pdf2image.pdfinfo_from_path(pdf_path)["Pages"]
+    chunk_count = total_pages // chunk_size + (1 if total_pages % chunk_size != 0 else 0)
+    pool = Pool(processes=cpu_count())  # Create a multiprocessing Pool
 
-  for i, image in enumerate(images):
-    with io.BytesIO() as output:
-      
-      image.save(output, format="JPEG")
-      image_data = output.getvalue()
-     
-      encoded_image = base64.b64encode(image_data).decode("utf-8")
+    # Process each chunk of pages in parallel
+    results = []
+    for chunk_index in range(chunk_count):
+        first_page = chunk_index * chunk_size + 1
+        last_page = min((chunk_index + 1) * chunk_size, total_pages)
+        results.append(pool.apply_async(process_chunk, (pdf_path, first_page, last_page, output_folder, chunk_index)))
 
-      filename = f"page_{i+4}.jpg"  
-      encoded_images_json[f"{i+4}": encoded_image]
-      image.save(os.path.join("/teamspace/studios/this_studio/images", filename), format="JPEG")
-  
-  try:
-    json_string = json.dumps(encoded_images_json, indent=4)  
+    pool.close()
+    pool.join()
 
-    with open(pdf_path, 'w') as f:
-        json.dump(data, f)
-  except: 
-    continue
-  return encoded_images
+    encoded_images_json = {}
+    for result in results:
+        encoded_images_json.update(result.get())  # Merge results from all processes
+
+    return encoded_images_json
 
 
-encoded_images = convert_pdf_to_base64(pdf_path="Medical_Record_File_1.pdf",first_page=4, last_page=6)
+encoded_images = convert_pdf_to_base64(pdf_path="data/Medical_Record_File_1.pdf")
 # print(encoded_images)
 # print(len(encoded_images))
 text_message = {
