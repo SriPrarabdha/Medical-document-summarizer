@@ -5,27 +5,55 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 import google.generativeai as genai
 import os
 from langchain_core.messages import HumanMessage
+import pypdfium2 as pdfium
 
-# Prarabdh's API Key : AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU
+file_to_extract = "Medical_Record_File_1"
+# Prarabdha's API Key : AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU
 # Krishan's API Key : AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI
+
+def extract_image_from_pdf(filename: str)->int:
+    """
+    Function to extract and save, all the pages of the pdf as png images
+
+    Arg: 
+        filenames : String 
+
+    Returns:
+        n_pages : int
+    """
+    pdf = pdfium.PdfDocument("data\{}.pdf".format(filename))
+    n_pages = len(pdf)
+    print(n_pages)
+    for page_number in range(n_pages):
+        page = pdf.get_page(page_number)
+        bitmap = page.render(
+            scale=3,
+        )
+        pil_image = bitmap.to_pil()
+        pil_image.save("all_images/{}/page{}.png".format(filename,page_number+1))
+    
+    return n_pages
+
 os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-
 model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0.8)
 
-file_to_extract = "Medical_Record_File_3"
-
 # Store Pdf with convert_from_path function
-images = convert_from_path('data\{}.pdf'.format(file_to_extract))
+n_pages = extract_image_from_pdf(file_to_extract)
+
 
 encoded_json = {}
 
-for i in range(len(images)): 
-    # Save pages as images from the pdf
-    images[i].save('all_images/{}/page{}.jpg'.format(file_to_extract,str(i+1)), 'JPEG')
+for i in range(len(n_pages)): 
+    os.environ["GOOGLE_API_KEY_Krishan"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
 
+    # Switching between API keys 
+    if i%4 ==0:
+        genai.configure(api_key=os.environ["GOOGLE_API_KEY_Krishan"])
 
-    with open('all_images/{}/page{}.jpg'.format(file_to_extract,str(i+1)), "rb") as image_file:
+    model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0.8)
+
+    with open('all_images/{}/page{}.png'.format(file_to_extract,str(i+1)), "rb") as image_file:
         image_data = image_file.read()
         encoded_string = base64.b64encode(image_data).decode("utf-8")
 
@@ -43,7 +71,7 @@ for i in range(len(images)):
     answer = model.invoke([message])
 
     encoded_json[i+1] = str(answer.content)
-    print("{}/{} || {} percentage completed".format(i+1,len(images), ((i+1)*100)/len(images)))
+    print("{}/{} || {} percentage completed".format(i+1,n_pages, ((i+1)*100)/n_pages))
 
 save_file = open("Extracted_Data/{}.json".format(file_to_extract), "w")
 json.dump(encoded_json, save_file, indent = 4)
