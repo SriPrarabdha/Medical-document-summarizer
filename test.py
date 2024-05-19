@@ -13,8 +13,8 @@ os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
 
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
-# models = [m for m in genai.list_models()]
-# print(models)
+models = [m for m in genai.list_models()]
+print(models)
 
 model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0.8)
 
@@ -23,11 +23,16 @@ with open(filepath, "rb") as image_file:
     image_data = image_file.read()
     encoded_string = base64.b64encode(image_data).decode("utf-8")
 
-print(encoded_string)
+# print(encoded_string)
+
+# text_message = {
+#     "type": "text",
+#     "text": "Your task is to return me each and every thing written in this image as a plain simple text and nothing else. In some lines we find 'With/Without' and there is circle on one of the text to be selected . If 'Without' is circled then just return 'Without' in your generated answer and drop 'With' . also like if you find 'Y/N' or 'Yes/No' and one is circled then just inclued the circled one in your answer. these are just examples in general if anywhere in a line you see multiple texts separated by '/' and one of the texts is circled then just return that one and drop others."
+# }
 
 text_message = {
     "type": "text",
-    "text": "Your task is to return me each and every thing written in this image as a plain simple text and nothing else. In some lines we find 'With/Without' and there is circle on one of the text to be selected . If 'Without' is circled then just return 'Without' in your generated answer and drop 'With' . also like if you find 'Y/N' or 'Yes/No' and one is circled then just inclued the circled one in your answer. these are just examples in general if anywhere in a line you see multiple texts separated by '/' and one of the texts is circled then just return that one and drop others."
+    "text": "Your task is to return me each and every thing written in this image as a plain simple text and nothing else. In some lines we find that one of the word is circled while others are not like in Thoracic/ lumbar/ back pain , back pain is majorly circled , in Y/N on of them is circled , in With/Without one is circled while other is not your task is to only write the circled one and drop the other ones in your generated answer"
 }
 
 image_message = {
