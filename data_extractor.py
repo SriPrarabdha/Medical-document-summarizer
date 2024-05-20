@@ -7,7 +7,7 @@ import os
 from langchain_core.messages import HumanMessage
 import pypdfium2 as pdfium
 
-file_to_extract = "Medical_Record_File_1"
+file_to_extract = "Medical_Record_File_2"
 # Prarabdha's API Key : AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU
 # Krishan's API Key : AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI
 
@@ -44,7 +44,7 @@ n_pages = extract_image_from_pdf(file_to_extract)
 
 encoded_json = {}
 
-for i in range(len(n_pages)): 
+for i in range(n_pages): 
     os.environ["GOOGLE_API_KEY_Krishan"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
 
     # Switching between API keys 
