@@ -48,8 +48,8 @@ texts_split = text_splitter.split_text(text)
 docs = [Document(page_content=text) for text in texts_split]
 
 response = map_reduce_summary(docs, model)
-# response = refine_summarize(docs, model) -> Working
-# response = raptor_summarize(model, docs) -> Generating summary with a Bad Argument Error
+# response = refine_summarize(docs, model) #-> Working
+# response = raptor_summarize(model, docs) #-> Generating summary with a Bad Argument Error
 
 print(response)
 
