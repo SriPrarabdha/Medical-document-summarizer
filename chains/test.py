@@ -1,5 +1,6 @@
 from stuff_summarization import stuff_summarize
 from map_reduce_summarization import map_reduce_summary
+from refine_summarization import refine_summarize
 
 from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 from langchain.chains.llm import LLMChain
@@ -24,8 +25,8 @@ genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0)
 
-
-with open('/teamspace/studios/this_studio/Medical-document-summarizer/Extracted_Data/Medical_Record_File_3.json', 'r') as file:
+# with open('/teamspace/studios/this_studio/Medical-document-summarizer/Extracted_Data/Medical_Record_File_3.json', 'r') as file:
+with open('Extracted_Data/Medical_Record_File_3.json', 'r') as file:
     data = json.load(file)
 
 text = ""
@@ -45,6 +46,7 @@ texts_split = text_splitter.split_text(text)
 docs = [Document(page_content=text) for text in texts_split]
 
 response = map_reduce_summary(docs, model)
+# response = refine_summarize(docs, model) -> Working
 
 print(response)
 
