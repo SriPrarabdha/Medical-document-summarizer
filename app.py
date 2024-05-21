@@ -32,14 +32,12 @@ import json
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-
 st.title("LLM Assistant")
 input_prompt = st.text_area("Enter your prompt")
 
 data = st.selectbox("Choose a pdf", ["Medical_Record_File_1", "Medical_Record_File_2", "Medical_Record_File_3"])
 method = st.selectbox("Choose a method", ["Stuff", "Map_Reduce", "Refine", "Raptor"])
 chunk_size = st.slider("Chunk Size", 1000, 5000, value=4000, step=100)
-
 
 # os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
 os.environ["GOOGLE_API_KEY"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
