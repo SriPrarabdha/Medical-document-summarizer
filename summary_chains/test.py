@@ -38,7 +38,7 @@ for key in data:
     text= text + " " + data[key]
     # print(data[key])
 
-chunk_size_tok = 1000
+chunk_size_tok = 5000
 text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
     chunk_size=chunk_size_tok, chunk_overlap=0
 )

@@ -35,24 +35,26 @@ def map_reduce_summary(split_docs, llm):
 
     print("check 3 combine done")
 
-    # Combines and iteratively reduces the mapped documents
     reduce_documents_chain = ReduceDocumentsChain(
-        # This is final chain that is called.
         combine_documents_chain=combine_documents_chain,
-        # If documents exceed context for `StuffDocumentsChain`
         collapse_documents_chain=combine_documents_chain,
-        # The maximum number of tokens to group documents into.
-        token_max=2000,
+        token_max=5000,
     )
     map_reduce_chain = MapReduceDocumentsChain(
-        # Map chain
         llm_chain=map_chain,
-        # Reduce chain
         reduce_documents_chain=reduce_documents_chain,
-        # The variable name in the llm_chain to put the documents in
         document_variable_name="docs",
-        # Return the results of the map steps in the output
         return_intermediate_steps=True,
     )
+    print("last_check")
 
-    return map_reduce_chain.invoke(split_docs)
+    summary = ""
+
+    response = map_reduce_chain.invoke(split_docs)
+
+    for intermediate_summaries in response["intermediate_steps"]:
+        summary = summary + " "+ intermediate_summaries
+
+    summary = summary + " " + response["output_text"]
+
+    return summary
