@@ -359,6 +359,6 @@ def recursive_embed_cluster_summarize(
 
     return results
 
-def raptor_summarize(llm: ChatGoogleGenerativeAI, leaf_texts: list):
+def raptor_summarize(leaf_texts: list):
     results = recursive_embed_cluster_summarize(leaf_texts,level=1,n_levels=6)
     return results
