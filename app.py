@@ -46,6 +46,7 @@ genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0)
 
+
 def get_output(filename, chunk_size, method):
     with open(f'Extracted_Data/{filename}.json', 'r') as file:
         data = json.load(file)
@@ -57,9 +58,8 @@ def get_output(filename, chunk_size, method):
         text= text + " " + data[key]
         # print(data[key])
 
-    chunk_size_tok = chunk_size
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-        chunk_size=chunk_size_tok, chunk_overlap=80
+        chunk_size=chunk_size, chunk_overlap=80
     )
     texts_split = text_splitter.split_text(text)
 
