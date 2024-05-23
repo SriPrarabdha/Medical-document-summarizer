@@ -1,5 +1,19 @@
+import asyncio
+def get_or_create_eventloop():
+    try:
+        return asyncio.get_event_loop()
+    except RuntimeError as ex:
+        if "There is no current event loop in thread" in str(ex):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            return asyncio.get_event_loop()
+
+get_or_create_eventloop()
+
 import streamlit as st
 from summary_chains.stuff_summarization import stuff_summarize
+from summary_chains.refine_summarization import refine_summarize
+from summary_chains.raptor_summarization import raptor_summarize
 from summary_chains.map_reduce_summarization import map_reduce_summary
 
 from langchain.chains.combine_documents.stuff import StuffDocumentsChain
@@ -18,6 +32,13 @@ import json
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+st.title("LLM Assistant")
+input_prompt = st.text_area("Enter your prompt")
+
+data = st.selectbox("Choose a pdf", ["Medical_Record_File_1", "Medical_Record_File_2", "Medical_Record_File_3"])
+method = st.selectbox("Choose a method", ["Stuff", "Map_Reduce", "Refine", "Raptor"])
+chunk_size = st.slider("Chunk Size", 1000, 5000, value=4000, step=100)
+
 # os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
 os.environ["GOOGLE_API_KEY"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
 
@@ -27,7 +48,7 @@ model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature
 
 
 def get_output(filename, chunk_size, method):
-    with open(f'/teamspace/studios/this_studio/Medical-document-summarizer/Extracted_Data/{filename}.json', 'r') as file:
+    with open(f'Extracted_Data/{filename}.json', 'r') as file:
         data = json.load(file)
 
     text = ""
@@ -45,22 +66,14 @@ def get_output(filename, chunk_size, method):
     docs = [Document(page_content=text) for text in texts_split]
 
     if method == "Stuff":
-        return stuff_summarize(docs)
+        return stuff_summarize(docs, model)
     elif method == "Map_Reduce":
-        return map_reduce_summary(docs)
+        return map_reduce_summary(docs, model)
     elif method == "Refine":
-        return stuff_summarize(docs)
+        return refine_summarize(docs, model)
     elif method == "Raptor":
-        return stuff_summarize(docs)
-
-st.title("LLM Assistant")
-
-input_prompt = st.text_area("Enter your prompt")
-
-data = st.selectbox("Choose a pdf", ["Medical_Record_File_1", "Medical_Record_File_2", "Medical_Record_File_3"])
-method = st.selectbox("Choose a method", ["Stuff", "Map_Reduce", "Refine", "Raptor"])
-chunk_size = st.slider("Chunk Size", 1000, 5000, value=4000, step=100)
+        return raptor_summarize(docs)
 
 if st.button("Submit"):
-    output_text = get_output(input_prompt, method)
+    output_text = get_output(data,chunk_size,method)
     st.markdown(output_text)
