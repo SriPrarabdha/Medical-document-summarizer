@@ -1,6 +1,9 @@
 from langchain_community.document_loaders import PyPDFLoader
 import re 
 
+import fitz 
+import json
+
 abb = ['MD', 'DO', 'PT', 'DC', 'P.C.']
 
 def get_doctor_page_number(filename):
@@ -38,6 +41,25 @@ def get_doctor_page_number(filename):
 
     print(data)
     return data
+
+
+
+def extract_toc(pdf_path):
+    document = fitz.open(pdf_path)
+
+    # Extract the table of contents
+    toc = document.get_toc()
+
+    # Create a dictionary for the TOC
+    toc_dict = {}
+
+    for item in toc:
+        title = item[1]
+        page = item[2]
+        toc_dict[title] = page
+        
+    print(toc_dict)
+    return toc_dict
 
 def slice_doctor_content(pages_json):
     
