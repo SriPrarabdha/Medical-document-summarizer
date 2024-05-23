@@ -57,7 +57,10 @@ def extract_toc(pdf_path):
         title = item[1]
         page = item[2]
         toc_dict[title] = page
-        
+    
+    #Sorting the dictionary based on the values
+    toc_dict = {k: v for k, v in sorted(toc_dict.items(), key=lambda item: item[1])}
+    
     print(toc_dict)
     return toc_dict
 
