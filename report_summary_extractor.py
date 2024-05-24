@@ -8,11 +8,11 @@ import json
 
 os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0.8)
+model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0.7)
 
 prompt_template = """Given this medical report of a patient give me a concise summary for all this document in multiple points where each points follows a template like
-*Type of form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations for a patient* dated *date of that form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations* by *name of physician /attorney if present* - Impression : *any impression/inference from form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations*
-    
+Type of form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations for a patient dated date of that form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations by name of physician /attorney if present - Impression : any impression/inference from form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations
+Strictly follow the given template and don not anything beside the short yet comprehensive summary
 Context:
 "{text}"
 """
