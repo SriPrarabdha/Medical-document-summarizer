@@ -38,11 +38,15 @@ os.environ["GOOGLE_API_KEY"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0)
 
-prompt_template = """Given this medical report of a patient give me a concise summary for all this document in multiple points where each points follows a template like
-*Type of form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations for a patient* dated *date of that form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations* by *name of physician /attorney if present* - Impression : *any impression/inference from form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations*
-    
-Context:
+prompt_template = """Context:
 "{text}"
+
+Given this medical report of a patient give me a concise summary for all this document in 
+multiple points where each points follows a template like
+{Type of form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations for a patient}
+dated {date of that form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations} 
+by {name of physician /attorney if present} - Impression : {any impression/inference from form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations}.
+Strictly follow this format
 """
 prompt = PromptTemplate.from_template(prompt_template)
 llm_chain = LLMChain(llm=model, prompt=prompt)
