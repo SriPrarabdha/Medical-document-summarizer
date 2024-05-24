@@ -11,3 +11,4 @@ tavily-python
 qdrant-client
 flashrank
 fastembed
+streamlit

@@ -14,7 +14,7 @@ import google.generativeai as genai
 
 RANDOM_SEED = 224 
 
-# os.environ["GOOGLE_API_KEY"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
+os.environ["GOOGLE_API_KEY"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 embd = GoogleGenerativeAIEmbeddings(model='models/text-embedding-004')
