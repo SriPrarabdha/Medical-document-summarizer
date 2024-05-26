@@ -20,8 +20,8 @@ prompt = PromptTemplate.from_template(prompt_template)
 llm_chain = LLMChain(llm=model, prompt=prompt)
 
 # Prompt for checking the relevance of the summary
-checker_prompt_template = """ Analyze the context, and return 'True' if it is related to a Type of form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations of a patient dated date of that form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations by name of physician/attorney and if present Impression : any impression/inference from form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations, else return 'False' in all other cases.
-The answer should be strictly be in 'True' or 'False'
+checker_prompt_template = """ Analyze the context, and return a threshold score based on the criticality of the report and impression returned with respect to the health of a person.
+Strictly just return the threshold score only, and the threshold score should be an integer.
 Context:
 "{text}"
 """
@@ -35,12 +35,12 @@ def report_summary_extractor(filename):
     for i in range(1, len(report_extracted_data) + 1):
         partial_sum = llm_chain.invoke(report_extracted_data[i])['text']
 
-        llm_validation = checker_llm_chain.invoke(partial_sum)['text']
+        llm_threshold = checker_llm_chain.invoke(partial_sum)['text']
 
-        if 'True' in llm_validation:
+        if int(llm_threshold)>=7:
             complete_sum += partial_sum
         
-        print('{} / {} Completed || {}%'.format(i, len(report_extracted_data), (i * 100) / len(report_extracted_data)))
+        print('{} / {} Completed || {}% || Validation: {}'.format(i, len(report_extracted_data),(i*100)/len(report_extracted_data), int(llm_threshold)>= 7))
         yield complete_sum
     with open('Report_Wise_Summary/{}.txt'.format(filename), 'w') as f:
         f.write(complete_sum)
