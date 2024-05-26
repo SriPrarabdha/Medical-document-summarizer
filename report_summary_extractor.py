@@ -19,12 +19,27 @@ Context:
 prompt = PromptTemplate.from_template(prompt_template)
 llm_chain = LLMChain(llm=model, prompt=prompt)
 
+# Prompt for checking the relevance of the summary
+checker_prompt_template = """ Analyze the context, and return 'True' if it is related to a Type of form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations of a patient dated date of that form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations by name of physician/attorney and if present Impression : any impression/inference from form/Diagnosis/examination or pharmacy/medical prescription reports/follow-up evaluations, else return 'False' in all other cases.
+The answer should be strictly be in 'True' or 'False'
+Context:
+"{text}"
+"""
+
+checker_prompt = PromptTemplate.from_template(checker_prompt_template)
+checker_llm_chain = LLMChain(llm=model, prompt=checker_prompt)
+
 def report_summary_extractor(filename):
     report_extracted_data = report_wise_json_data_extraction(filename)
     complete_sum = ""
     for i in range(1, len(report_extracted_data) + 1):
         partial_sum = llm_chain.invoke(report_extracted_data[i])['text']
-        complete_sum += partial_sum
+
+        llm_validation = checker_llm_chain.invoke(partial_sum)['text']
+
+        if 'True' in llm_validation:
+            complete_sum += partial_sum
+        
         print('{} / {} Completed || {}%'.format(i, len(report_extracted_data), (i * 100) / len(report_extracted_data)))
         yield complete_sum
     with open('Report_Wise_Summary/{}.txt'.format(filename), 'w') as f:
