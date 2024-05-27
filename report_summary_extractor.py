@@ -16,6 +16,7 @@ Strictly follow the given template and don not anything beside the short yet com
 Context:
 "{text}"
 """
+
 prompt = PromptTemplate.from_template(prompt_template)
 llm_chain = LLMChain(llm=model, prompt=prompt)
 
@@ -33,11 +34,12 @@ def report_summary_extractor(filename):
     report_extracted_data = report_wise_json_data_extraction(filename)
     complete_sum = ""
     for i in range(1, len(report_extracted_data) + 1):
-        partial_sum = llm_chain.invoke(report_extracted_data[i])['text']
+        partial_sum = llm_chain.invoke(report_extracted_data[i][2])['text']
 
         llm_threshold = checker_llm_chain.invoke(partial_sum)['text']
 
         if int(llm_threshold)>=7:
+            complete_sum += "\n\n || REFERENCES PAGE NOS: {}, {} ||".format(report_extracted_data[i][0],report_extracted_data[i][1])
             complete_sum += partial_sum
         
         print('{} / {} Completed || {}% || Validation: {}'.format(i, len(report_extracted_data),(i*100)/len(report_extracted_data), int(llm_threshold)>= 7))
