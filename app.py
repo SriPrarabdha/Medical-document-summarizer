@@ -16,6 +16,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from report_summary_extractor import report_summary_extractor
 from report_wise_json_segregator import report_wise_json_data_extraction
 
+import time
+from PIL import Image
+
 def get_or_create_eventloop():
     try:
         return asyncio.get_event_loop()
@@ -27,6 +30,21 @@ def get_or_create_eventloop():
 
 get_or_create_eventloop()
 
+loader = st.empty()
+
+def simulate_long_process():
+    # Display the loader
+    with loader.container():
+        # Load the circular loader image
+        loader_image = Image.open('loader.gif')
+        
+        # Display the circular loader image
+        st.image(loader_image, caption='Loading...', use_column_width=True)
+        
+        # Loop for 10 seconds
+        for i in range(100):
+            time.sleep(0.1)
+
 st.title("LLM Assistant")
 input_prompt = st.text_area("Enter your prompt")
 
@@ -37,6 +55,10 @@ chunk_size = st.slider("Chunk Size", 1000, 5000, value=4000, step=100)
 os.environ["GOOGLE_API_KEY"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0)
+
+if data:
+    # Simulate a long-running process
+    simulate_long_process()
 
 prompt_template = """Context:
 "{text}"
