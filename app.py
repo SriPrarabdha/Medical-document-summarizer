@@ -30,18 +30,14 @@ def get_or_create_eventloop():
 
 get_or_create_eventloop()
 
-loader = st.empty()
 
 def simulate_long_process():
-    # Display the loader
     with loader.container():
-        # Load the circular loader image
+    
         loader_image = Image.open('loader.gif')
         
-        # Display the circular loader image
         st.image(loader_image, caption='Loading...', use_column_width=True)
-        
-        # Loop for 10 seconds
+
         for i in range(100):
             time.sleep(0.1)
 
@@ -49,6 +45,7 @@ st.title("LLM Assistant")
 input_prompt = st.text_area("Enter your prompt")
 
 data = st.selectbox("Choose a pdf", ["Medical_Record_File_1", "Medical_Record_File_2", "Medical_Record_File_3"])
+loader = st.empty()
 method = st.selectbox("Choose a method", ["Stuff", "Map_Reduce", "Refine", "Raptor", "Summary"])
 chunk_size = st.slider("Chunk Size", 1000, 5000, value=4000, step=100)
 
@@ -56,9 +53,10 @@ os.environ["GOOGLE_API_KEY"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0)
 
-if data:
-    # Simulate a long-running process
+if selected_option and selected_option != prev_option:
+
     simulate_long_process()
+    prev_option = selected_option
 
 prompt_template = """Context:
 "{text}"
