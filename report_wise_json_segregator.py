@@ -26,25 +26,38 @@ def report_wise_json_data_extraction(filename):
             temps = spage 
             tempe = spage+15
             while(tempe < epage):
-                temp = ""
                 print(temps , "end=", tempe)
                 for page in range(temps, tempe):
                     if (temps == tempe):
                         continue
                     # print(spage , "end=", epage)
                     # send_chunk[i] = json_data[str(page)]
+                    
                     temp = "\n".join([temp, json_data[str(page)]])
-                
+                    
+                if temp != "":
+                    send_chunk[counter] = (temps, tempe, temp)
+                    counter +=1
+                    temp = ""
+
                 if (tempe+15 < epage):
                     temps = tempe
                     tempe += 15
                 else:
                     temps = tempe
                     tempe = epage
-                    
-                if temp != "":
-                    send_chunk[counter] = temp
-                    counter +=1
+                    for page in range(temps, tempe):
+                        if (temps == tempe):
+                            continue
+                        # print(spage , "end=", epage)
+                        # send_chunk[i] = json_data[str(page)]
+                        
+                        temp = "\n".join([temp, json_data[str(page)]])
+                        
+                    if temp != "":
+                        send_chunk[counter] = (temps, tempe, temp)
+                        counter +=1
+                        temp = ""
         else:
             print(spage , "end=", epage)
             for page in range(spage, epage):
@@ -55,7 +68,7 @@ def report_wise_json_data_extraction(filename):
                 temp = "\n".join([temp, json_data[str(page)]])
 
             if temp != "":
-                send_chunk[counter] = temp
+                send_chunk[counter] = (spage, epage, temp)
                 counter +=1
 
     return send_chunk
