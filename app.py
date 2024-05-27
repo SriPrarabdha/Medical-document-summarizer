@@ -53,10 +53,10 @@ os.environ["GOOGLE_API_KEY"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0)
 
-if selected_option and selected_option != prev_option:
+if data and data != prev_option:
 
     simulate_long_process()
-    prev_option = selected_option
+    prev_option = data
 
 prompt_template = """Context:
 "{text}"
