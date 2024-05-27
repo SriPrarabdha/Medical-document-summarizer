@@ -41,6 +41,8 @@ def simulate_long_process():
         for i in range(100):
             time.sleep(0.1)
 
+prev_option = None
+
 st.title("LLM Assistant")
 input_prompt = st.text_area("Enter your prompt")
 
