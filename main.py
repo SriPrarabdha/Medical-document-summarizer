@@ -33,8 +33,11 @@ from lcserve import serving
 
 import nltk
 import os
+from dotenv import load_dotenv
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
+load_dotenv()
+
+os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY1')
 
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
@@ -68,7 +71,7 @@ def convert_pdf_to_base64(pdf_path, first_page=4, last_page=24, output_folder="c
     with open(pdf_path, 'w') as f:
         json.dump(data, f)
   except: 
-    continue
+    pass
   return encoded_images
 
 
@@ -131,16 +134,15 @@ def get_answers(prompt:str , **kwargs):
 
     retriever = PineconeHybridSearchRetriever(embeddings=embeddings, sparse_encoder=splade_encoder, index=index)
 
-    #setting up open ai env
-    os.environ["OPENAI_API_KEY"] = "API_KEY" 
+    #setting up open ai env 
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    openai.organization = "ORG_ID"
+    # openai.organization = "ORG_ID"
     llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo" , verbose = True , streaming=True , callback_manager=CallbackManager([streaming_handler]))
 
     # Creating a langchain document retriver chain
     dnd_qa = RetrievalQA.from_chain_type(llm=llm, chain_type="refine", retriever=retriever , callback_manager = CallbackManager([streaming_handler]))
 
-    os.environ["SERPAPI_API_KEY"] = "API_KEY"
+    os.environ["SERPAPI_API_KEY"] = os.environ.get('SERP_API_KEY1')
     search = SerpAPIWrapper()
 
     #Adding tools to help the agent

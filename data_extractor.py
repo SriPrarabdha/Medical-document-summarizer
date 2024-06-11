@@ -6,10 +6,11 @@ import google.generativeai as genai
 import os
 from langchain_core.messages import HumanMessage
 import pypdfium2 as pdfium
+from dotenv import load_dotenv
+
+load_dotenv()
 
 file_to_extract = "Medical_Record_File_2"
-# Prarabdha's API Key : AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU
-# Krishan's API Key : AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI
 
 def extract_image_from_pdf(filename: str)->int:
     """
@@ -34,7 +35,7 @@ def extract_image_from_pdf(filename: str)->int:
     
     return n_pages
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
+os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY1')
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0.8)
 
@@ -45,11 +46,11 @@ n_pages = extract_image_from_pdf(file_to_extract)
 encoded_json = {}
 
 for i in range(n_pages): 
-    os.environ["GOOGLE_API_KEY_Krishan"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
+    os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY1')
 
     # Switching between API keys 
     if i%4 ==0:
-        genai.configure(api_key=os.environ["GOOGLE_API_KEY_Krishan"])
+        genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
     model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0.8)
 

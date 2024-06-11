@@ -8,8 +8,11 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.schema.output_parser import StrOutputParser
 from langchain_core.messages import HumanMessage
 import google.generativeai as genai
+from dotenv import load_dotenv
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
+load_dotenv()
+
+os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY1')
 
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 

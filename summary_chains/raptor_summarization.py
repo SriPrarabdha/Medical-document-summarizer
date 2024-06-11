@@ -11,10 +11,12 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain import PromptTemplate
 import os 
 import google.generativeai as genai
+from dotenv import load_dotenv
 
+load_dotenv()
 RANDOM_SEED = 224 
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
+os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY1')
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 embd = GoogleGenerativeAIEmbeddings(model='models/text-embedding-004')

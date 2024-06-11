@@ -4,7 +4,11 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import google.generativeai as genai
 import os
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
+from dotenv import load_dotenv
+
+load_dotenv()
+
+os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY1')
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 embd = GoogleGenerativeAIEmbeddings(model='models/text-embedding-004')

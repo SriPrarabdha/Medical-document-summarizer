@@ -5,8 +5,11 @@ from langchain.chains.llm import LLMChain
 from langchain_core.prompts import PromptTemplate
 from report_wise_json_segregator import report_wise_json_data_extraction
 import json
+from dotenv import load_dotenv
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
+load_dotenv()
+
+os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY1')
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 model = ChatGoogleGenerativeAI(model='models/gemini-1.5-pro-latest', temperature=0.7)
 

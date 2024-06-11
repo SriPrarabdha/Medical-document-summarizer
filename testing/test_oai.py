@@ -31,7 +31,7 @@ def convert_pdf_chunk_to_base64(pdf_path, first_page=4, last_page=24, output_fol
     with open(pdf_path, 'w') as f:
         json.dump(data, f)
   except: 
-    continue
+    pass
   return encoded_images
 
 

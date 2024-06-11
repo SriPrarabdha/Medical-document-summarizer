@@ -17,9 +17,11 @@ import google.generativeai as genai
 import json
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from dotenv import load_dotenv
 
-# os.environ["GOOGLE_API_KEY"] = "AIzaSyCP1kveVOTOIMyzvEY6Xdwpq18567ETBPU"
-os.environ["GOOGLE_API_KEY"] = "AIzaSyDx7cfKeqr0YK0TE8767lnMz6G5NmeXJBI"
+load_dotenv()
+# os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY1')
+os.environ["GOOGLE_API_KEY"] = os.environ.get('GOOGLE_API_KEY2')
 
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
